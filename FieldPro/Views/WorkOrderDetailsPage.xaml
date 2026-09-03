@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="FieldPro.Views.WorkOrderDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Work Order Details">
+
+    <ScrollView>
+
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <Label
+                Text="{Binding WorkOrder.Title}"
+                FontSize="26"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="{Binding WorkOrder.Id, StringFormat='Work Order #{0}'}"
+                FontSize="16" />
+
+            <BoxView HeightRequest="1" />
+
+            <Label
+                Text="Customer"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="{Binding WorkOrder.CustomerName}"
+                FontSize="18" />
+
+            <Label
+                Text="Address"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="{Binding WorkOrder.Address}"
+                FontSize="18" />
+
+            <Label
+                Text="Priority"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="{Binding WorkOrder.Priority}"
+                FontSize="18" />
+
+            <Label
+                Text="Status"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="{Binding WorkOrder.Status}"
+                FontSize="18" />
+
+            <Label
+                Text="Scheduled Date"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="{Binding WorkOrder.ScheduledDate, StringFormat='{0:dd MMM yyyy HH:mm}'}"
+                FontSize="18" />
+
+            <Label
+                Text="Description"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="{Binding WorkOrder.Description}"
+                FontSize="16" />
+
+            <HorizontalStackLayout Spacing="12">
+                <Button
+                    Text="Start Work"
+                    Command="{Binding StartWorkCommand}"
+                    IsEnabled="{Binding IsStartEnabled}" />
+
+                <Button
+                    Text="Complete Work"
+                    Command="{Binding CompleteWorkCommand}"
+                    IsEnabled="{Binding IsCompleteEnabled}" />
+            </HorizontalStackLayout>
+            <ActivityIndicator
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>
