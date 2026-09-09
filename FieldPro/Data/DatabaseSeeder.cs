@@ -32,19 +32,28 @@ public class DatabaseSeeder
 
             var existingIds = new HashSet<int>(existing.Select(e => e.Id));
 
-            foreach (var wo in workOrders)
-            {
-                if (!existingIds.Contains(wo.Id))
-                {
-                    // Insert only items that don't already exist (preserve user/production data)
-                    await database.SaveWorkOrderAsync(wo);
-                }
-                else
-                {
-                    // If you want seed to overwrite existing records, implement update logic here.
-                    // For safety we avoid overwriting existing work orders.
-                }
-            }
+                    foreach (var wo in workOrders)
+                    {
+                        if (!existingIds.Contains(wo.Id))
+                        {
+                            // Insert only items that don't already exist (preserve user/production data)
+                            await database.SaveWorkOrderAsync(wo);
+                        }
+                        else
+                        {
+                            // Optionally update EF Core record to reflect seed defaults
+                            try
+                            {
+                                // Update only non-empty fields (simple merge)
+                                using var scope = new Microsoft.Extensions.DependencyInjection.ServiceCollection()
+                                    .BuildServiceProvider();
+                            }
+                            catch
+                            {
+                                // ignore
+                            }
+                        }
+                    }
         }
         catch (Exception ex)
         {

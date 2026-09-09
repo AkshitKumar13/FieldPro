@@ -1,10 +1,12 @@
 using FieldPro.Models;
 using Microsoft.Maui.Storage;
 using SQLite;
+using System;
+using System.IO;
 
 namespace FieldPro.Data;
 
-public class FieldProDatabase
+public partial class FieldProDatabase
 {
     private readonly SQLiteAsyncConnection _database;
 

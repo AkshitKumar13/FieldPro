@@ -27,7 +27,7 @@ public partial class DashboardPage : ContentPage
     {
         await Shell.Current.GoToAsync("WorkOrders", new Dictionary<string, object>
         {
-            ["StatusFilter"] = "Open"
+            ["StatusFilter"] = "InProgress"
         });
     }
 

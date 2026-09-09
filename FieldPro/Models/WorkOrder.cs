@@ -1,23 +1,30 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FieldPro.Models;
 
-public class WorkOrder
+public partial class WorkOrder : ObservableObject
 {
-    [PrimaryKey]
-    public int Id { get; set; }
+    [ObservableProperty]
+    private int id;
 
-    public string Title { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string title = string.Empty;
 
-    public string CustomerName { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string customerName = string.Empty;
 
-    public string Address { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string address = string.Empty;
 
-    public string Priority { get; set; } = "Medium";
+    [ObservableProperty]
+    private string priority = "Medium";
 
-    public string Status { get; set; } = "Pending";
+    [ObservableProperty]
+    private string status = "Pending";
 
-    public DateTime ScheduledDate { get; set; }
+    [ObservableProperty]
+    private DateTime scheduledDate;
 
-    public string Description { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string description = string.Empty;
 }

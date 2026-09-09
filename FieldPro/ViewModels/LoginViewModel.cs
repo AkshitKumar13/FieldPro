@@ -24,7 +24,9 @@ public partial class LoginViewModel : ObservableObject
     public bool HasError =>
         !string.IsNullOrWhiteSpace(ErrorMessage);
 
-    public LoginViewModel(IAuthService authService, IAppSession appSession)
+    public LoginViewModel(
+        IAuthService authService,
+        IAppSession appSession)
     {
         _authService = authService;
         _appSession = appSession;
@@ -63,9 +65,11 @@ public partial class LoginViewModel : ObservableObject
                 return;
             }
 
+            // IMPORTANT: Set session as authenticated
             _appSession.Login();
 
-            await Shell.Current.GoToAsync("//Main");
+            // Navigate to Main -> Dashboard
+            await Shell.Current.GoToAsync("//Main/Dashboard");
         }
         finally
         {

@@ -1,4 +1,4 @@
-namespace FieldPro.Services;
+﻿namespace FieldPro.Services;
 
 public interface IAppSession
 {

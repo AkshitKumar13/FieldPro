@@ -1,0 +1,52 @@
+[
+  {
+    "Id": 1001,
+    "Title": "HVAC Maintenance",
+    "CustomerName": "ABC Industries",
+    "Address": "Delhi",
+    "Priority": "High",
+    "Status": "Pending",
+    "ScheduledDate": "2026-09-03T10:00:00",
+    "Description": "Perform routine HVAC maintenance."
+  },
+  {
+    "Id": 1002,
+    "Title": "Equipment Inspection",
+    "CustomerName": "XYZ Manufacturing",
+    "Address": "Noida",
+    "Priority": "Medium",
+    "Status": "In Progress",
+    "ScheduledDate": "2026-09-03T12:00:00",
+    "Description": "Inspect manufacturing equipment."
+  },
+  {
+    "Id": 1003,
+    "Title": "Electrical Repair",
+    "CustomerName": "Global Tech",
+    "Address": "Gurgaon",
+    "Priority": "Low",
+    "Status": "Completed",
+    "ScheduledDate": "2026-09-04T09:00:00",
+    "Description": "Repair electrical equipment."
+  },
+  {
+    "Id": 1004,
+    "Title": "Electrical Repair",
+    "CustomerName": "HI - Tech",
+    "Address": "NOida",
+    "Priority": "Low",
+    "Status": "Pending",
+    "ScheduledDate": "2026-09-04T09:00:00",
+    "Description": "Repair electrical equipment."
+  },
+  {
+    "Id": 1005,
+    "Title": "Maintenance",
+    "CustomerName": "ANI Hotel",
+    "Address": "Delhi",
+    "Priority": "Low",
+    "Status": "Pending",
+    "ScheduledDate": "2026-09-04T09:00:00",
+    "Description": "Repair Furnitures."
+  }
+]

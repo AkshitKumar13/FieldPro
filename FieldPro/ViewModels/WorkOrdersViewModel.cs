@@ -77,9 +77,13 @@ public partial class WorkOrdersViewModel : ObservableObject
 
             if (!string.IsNullOrWhiteSpace(statusFilter))
             {
-                if (string.Equals(statusFilter, "Open", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(statusFilter, "InProgress", StringComparison.OrdinalIgnoreCase))
                 {
-                    workOrders = workOrders.Where(w => !string.Equals(w.Status, "Completed", StringComparison.OrdinalIgnoreCase)).ToList();
+                    workOrders = workOrders
+                        .Where(w =>
+                            !string.Equals(w.Status, "Completed", StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(w.Status, "Pending", StringComparison.OrdinalIgnoreCase))
+                        .ToList();
                 }
                 else
                 {

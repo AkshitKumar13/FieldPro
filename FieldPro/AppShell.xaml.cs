@@ -29,14 +29,14 @@ public partial class AppShell : Shell
 
             if (seeder == null || database == null)
             {
-                await Shell.Current.DisplayAlert("Reseed", "Seeder or database not available.", "OK");
+                await Shell.Current.DisplayAlertAsync("Reseed", "Seeder or database not available.", "OK");
                 return;
             }
 
             await database.InitializeAsync();
             await seeder.ForceSeedAsync(database);
 
-            await Shell.Current.DisplayAlert("Reseed", "Database reseeded from seed.json.", "OK");
+            await Shell.Current.DisplayAlertAsync("Reseed", "Database reseeded from seed.json.", "OK");
 
             // Navigate to Dashboard so counts will refresh
             await Shell.Current.GoToAsync("//Dashboard");

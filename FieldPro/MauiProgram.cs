@@ -4,6 +4,11 @@ using FieldPro.Data;
 using FieldPro.ViewModels;
 using FieldPro.Views;
 using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+// Note: run DB initialization/seeding asynchronously to avoid blocking the UI thread on Android.
 
 namespace FieldPro
 {
@@ -37,7 +42,43 @@ namespace FieldPro
             builder.Services.AddTransient<DashboardPage>();
             builder.Services.AddTransient<WorkOrderDetailsViewModel>();
             builder.Services.AddTransient<WorkOrderDetailsPage>();
-            return builder.Build();
+            var mauiApp = builder.Build();
+
+            // Start DB initialization/seeding on a background task so we don't block startup (avoids Android deadlocks).
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    var database = mauiApp.Services.GetService<FieldPro.Data.FieldProDatabase>();
+                    var seeder = mauiApp.Services.GetService<FieldPro.Data.DatabaseSeeder>();
+
+                    if (database != null)
+                    {
+                        await database.InitializeAsync();
+
+                        if (seeder != null)
+                        {
+                            await seeder.SeedAsync(database);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        var logPath = Path.Combine(FileSystem.AppDataDirectory, "db_init_error.txt");
+                        var text = $"[{DateTime.UtcNow:u}] Database initialization error: {ex}\n";
+                        File.AppendAllText(logPath, text);
+                        System.Diagnostics.Debug.WriteLine(text);
+                    }
+                    catch
+                    {
+                        // swallow - don't let logging throw
+                    }
+                }
+            });
+
+            return mauiApp;
         }
     }
 }

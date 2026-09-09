@@ -22,11 +22,14 @@ public partial class WorkOrderDetailsViewModel : ObservableObject
     private bool isBusy;
 
     [ObservableProperty]
-    private bool isStartEnabled;
+    private string? photoPath;
+    public bool IsStartEnabled =>
+    !IsBusy &&
+    WorkOrder?.Status?.Equals("Pending", StringComparison.OrdinalIgnoreCase) == true;
 
-    [ObservableProperty]
-    private bool isCompleteEnabled;
-
+    public bool IsCompleteEnabled =>
+        !IsBusy &&
+        WorkOrder?.Status?.Equals("In Progress", StringComparison.OrdinalIgnoreCase) == true;
     [RelayCommand]
     private async Task StartWorkAsync()
     {
@@ -45,11 +48,6 @@ public partial class WorkOrderDetailsViewModel : ObservableObject
                 "Work Started",
                 $"Work order #{WorkOrder.Id} has been started.",
                 "OK");
-
-            UpdateButtonStates();
-
-            // Navigate back to the previous page so the work orders list can refresh
-            await Shell.Current.GoToAsync("..");
         }
         finally
         {
@@ -67,7 +65,59 @@ public partial class WorkOrderDetailsViewModel : ObservableObject
         {
             IsBusy = true;
 
+            // Check if camera is available
+            if (!MediaPicker.Default.IsCaptureSupported)
+            {
+                await Shell.Current.DisplayAlertAsync(
+                    "Camera Unavailable",
+                    "Camera is not available on this device.",
+                    "OK");
+
+                return;
+            }
+
+            // Open camera
+            var photo = await MediaPicker.Default.CapturePhotoAsync();
+
+            // User cancelled camera
+            if (photo == null)
+            {
+                await Shell.Current.DisplayAlertAsync(
+                    "Photo Required",
+                    "Please capture a photo before completing the work order.",
+                    "OK");
+
+                return;
+            }
+
+            // Create file name
+            var fileName =
+                $"WorkOrder_{WorkOrder.Id}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+
+            // Save inside app's local storage
+            var destinationPath = Path.Combine(
+                FileSystem.AppDataDirectory,
+                fileName);
+
+            await using var sourceStream =
+                await photo.OpenReadAsync();
+
+            await using var destinationStream =
+                File.Create(destinationPath);
+
+            await sourceStream.CopyToAsync(destinationStream);
+
+            // Keep path for later use
+            PhotoPath = destinationPath;
+
+            // Photo successfully captured
+            // NOW mark the work order as completed
             WorkOrder.Status = "Completed";
+
+            // If your WorkOrder model has a photo property,
+            // you can save the path here:
+            //
+            // WorkOrder.PhotoPath = destinationPath;
 
             await _workOrderService.SaveWorkOrderAsync(WorkOrder);
 
@@ -76,39 +126,18 @@ public partial class WorkOrderDetailsViewModel : ObservableObject
                 $"Work order #{WorkOrder.Id} has been completed.",
                 "OK");
 
-            UpdateButtonStates();
-
             await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                "Error",
+                $"Unable to complete work order.\n\n{ex.Message}",
+                "OK");
         }
         finally
         {
             IsBusy = false;
         }
-    }
-
-    partial void OnWorkOrderChanged(WorkOrder? value)
-    {
-        UpdateButtonStates();
-    }
-
-    partial void OnIsBusyChanged(bool value)
-    {
-        UpdateButtonStates();
-    }
-
-    private void UpdateButtonStates()
-    {
-        if (WorkOrder == null)
-        {
-            IsStartEnabled = false;
-            IsCompleteEnabled = false;
-            return;
-        }
-
-        // Start only when pending
-        IsStartEnabled = !IsBusy && string.Equals(WorkOrder.Status, "Pending", StringComparison.OrdinalIgnoreCase);
-
-        // Complete only when In Progress
-        IsCompleteEnabled = !IsBusy && string.Equals(WorkOrder.Status, "In Progress", StringComparison.OrdinalIgnoreCase);
     }
 }

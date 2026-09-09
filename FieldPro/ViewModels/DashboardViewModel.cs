@@ -40,6 +40,7 @@ public partial class DashboardViewModel : ObservableObject
         CompletedCount = all.Count(w => string.Equals(w.Status, "Completed", StringComparison.OrdinalIgnoreCase));
         PendingCount = all.Count(w => string.Equals(w.Status, "Pending", StringComparison.OrdinalIgnoreCase));
         // Open = not completed
-        OpenCount = all.Count(w => !string.Equals(w.Status, "Completed", StringComparison.OrdinalIgnoreCase));
+        OpenCount = all.Count(w => !string.Equals(w.Status, "Completed", StringComparison.OrdinalIgnoreCase) &&
+                            !string.Equals(w.Status, "Pending", StringComparison.OrdinalIgnoreCase));
     }
 }

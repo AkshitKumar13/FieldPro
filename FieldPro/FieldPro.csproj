@@ -63,6 +63,15 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+		<!-- Ensure seed.json is explicitly packaged for Windows output folders -->
+		<MauiAsset Include="Resources\Raw\seed.json" LogicalName="seed.json" />
+	</ItemGroup>
+
+	<!-- Ensure seed.json is copied to build output for platforms that expect it in output folders -->
+	<ItemGroup>
+	  <None Include="Resources\Raw\seed.json">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>

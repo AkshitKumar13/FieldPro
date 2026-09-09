@@ -69,17 +69,20 @@
                 Text="{Binding WorkOrder.Description}"
                 FontSize="16" />
 
-            <HorizontalStackLayout Spacing="12">
-                <Button
-                    Text="Start Work"
-                    Command="{Binding StartWorkCommand}"
-                    IsEnabled="{Binding IsStartEnabled}" />
+            <Button
+    Text="Start Work"
+    Command="{Binding StartWorkCommand}"
+    IsEnabled="{Binding IsStartEnabled}"
+    BackgroundColor="Blue"
+    TextColor="White" />
 
-                <Button
-                    Text="Complete Work"
-                    Command="{Binding CompleteWorkCommand}"
-                    IsEnabled="{Binding IsCompleteEnabled}" />
-            </HorizontalStackLayout>
+            <Button
+    Text="Complete Work"
+    Command="{Binding CompleteWorkCommand}"
+    IsEnabled="{Binding IsCompleteEnabled}"
+    BackgroundColor="Green"
+    TextColor="White" />
+
             <ActivityIndicator
                 IsRunning="{Binding IsBusy}"
                 IsVisible="{Binding IsBusy}" />
