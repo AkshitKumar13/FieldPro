@@ -33,14 +33,16 @@ public sealed class ContosoDatabase : ContosoDashboard.Services.IContosoDataServ
     public Task<User?> GetUserAsync(int id) => _database.Table<User>().Where(x => x.UserId == id).FirstOrDefaultAsync();
     public Task<List<ContosoTask>> GetTasksAsync(int userId) => _database.Table<ContosoTask>().Where(x => x.AssignedUserId == userId).OrderBy(x => x.DueDate).ToListAsync();
     public Task<List<ContosoTask>> GetAllTasksAsync() => _database.Table<ContosoTask>().OrderBy(x => x.DueDate).ToListAsync();
-    public async Task<int> AddTaskAsync(ContosoTask task)
+    public async Task<int> AddTaskAsync(ContosoTask task, int assignedByUserId)
     {
+        await EnsureCanAssignTasksAsync(assignedByUserId);
         await _database.InsertAsync(task);
         return task.TaskId;
     }
 
-    public async Task AssignTaskAsync(int taskId, int userId)
+    public async Task AssignTaskAsync(int taskId, int userId, int assignedByUserId)
     {
+        await EnsureCanAssignTasksAsync(assignedByUserId);
         await _database.ExecuteAsync("UPDATE ContosoTask SET AssignedUserId = ? WHERE TaskId = ?", userId, taskId);
         await _database.InsertAsync(new Notification
         {
@@ -48,6 +50,15 @@ public sealed class ContosoDatabase : ContosoDashboard.Services.IContosoDataServ
             Title = "Task assigned",
             Message = $"A task has been assigned to you (task #{taskId})."
         });
+    }
+
+    private async Task EnsureCanAssignTasksAsync(int userId)
+    {
+        var user = await GetUserAsync(userId);
+        if (user is not { Role: UserRole.ProjectManager or UserRole.TeamLead })
+        {
+            throw new UnauthorizedAccessException("Only project managers and team leads can assign tasks.");
+        }
     }
     public async Task<List<Project>> GetProjectsAsync(int userId)
     {

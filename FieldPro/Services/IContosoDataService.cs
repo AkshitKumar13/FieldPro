@@ -9,8 +9,8 @@ public interface IContosoDataService
     Task<User?> GetUserAsync(int id);
     Task<List<ContosoTask>> GetTasksAsync(int userId);
     Task<List<ContosoTask>> GetAllTasksAsync();
-    Task<int> AddTaskAsync(ContosoTask task);
-    Task AssignTaskAsync(int taskId, int userId);
+    Task<int> AddTaskAsync(ContosoTask task, int assignedByUserId);
+    Task AssignTaskAsync(int taskId, int userId, int assignedByUserId);
     Task<List<Project>> GetProjectsAsync(int userId);
     Task<List<ProjectMember>> GetProjectMembersAsync(int projectId);
     Task<List<Announcement>> GetAnnouncementsAsync();

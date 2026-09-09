@@ -14,10 +14,12 @@ public partial class TasksPage : ContentPage
     public string NewDescription { get; set; } = string.Empty;
     public User? SelectedAssignee { get; set; }
     public Project? SelectedProject { get; set; }
+    public bool CanAssignTasks => _session.CurrentUser is { Role: UserRole.ProjectManager or UserRole.TeamLead };
     public TasksPage(IContosoDataService data, IAppSession session) { InitializeComponent(); _data = data; _session = session; BindingContext = this; }
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        OnPropertyChanged(nameof(CanAssignTasks));
         Users.Clear();
         foreach (var user in await _data.GetUsersAsync()) Users.Add(user);
         Projects.Clear();
@@ -37,6 +39,12 @@ public partial class TasksPage : ContentPage
 
     private async void OnAddTaskClicked(object sender, EventArgs e)
     {
+        if (!CanAssignTasks)
+        {
+            await DisplayAlertAsync("Permission denied", "Only project managers and team leads can assign tasks.", "OK");
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(NewTitle) || SelectedAssignee == null || SelectedProject == null)
         {
             await DisplayAlertAsync("Missing information", "Enter a title, assignee, and project.", "OK");
@@ -50,7 +58,7 @@ public partial class TasksPage : ContentPage
             AssignedUserId = SelectedAssignee.UserId,
             ProjectId = SelectedProject.ProjectId,
             DueDate = DateTime.UtcNow.AddDays(7)
-        });
+        }, _session.CurrentUser!.UserId);
         NewTitle = string.Empty;
         NewDescription = string.Empty;
         OnPropertyChanged(nameof(NewTitle));
@@ -61,9 +69,15 @@ public partial class TasksPage : ContentPage
     private async void OnStatusChanged(object sender, EventArgs e) { if (sender is Picker { BindingContext: ContosoTask task }) await _data.UpdateTaskStatusAsync(task.TaskId, task.Status); }
     private async void OnAssigneeChanged(object sender, EventArgs e)
     {
+        if (!CanAssignTasks)
+        {
+            await DisplayAlertAsync("Permission denied", "Only project managers and team leads can assign tasks.", "OK");
+            return;
+        }
+
         if (sender is Picker { BindingContext: ContosoTask task, SelectedItem: User user })
         {
-            await _data.AssignTaskAsync(task.TaskId, user.UserId);
+            await _data.AssignTaskAsync(task.TaskId, user.UserId, _session.CurrentUser!.UserId);
             task.AssignedUserId = user.UserId;
         }
     }
