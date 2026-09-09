@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using FieldPro.Data;
 
-namespace FieldPro
+namespace ContosoDashboard
 {
     public partial class App : Application
     {

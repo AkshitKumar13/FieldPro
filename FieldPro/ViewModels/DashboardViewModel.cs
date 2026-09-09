@@ -1,16 +1,21 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using FieldPro.Services;
+using ContosoDashboard.Services;
 using System.Threading.Tasks;
 
-namespace FieldPro.ViewModels;
+namespace ContosoDashboard.ViewModels;
 
 public partial class DashboardViewModel : ObservableObject
 {
-    private readonly IWorkOrderService _workOrderService;
+    private readonly IContosoDataService _data;
+    private readonly IAppSession _session;
 
-    public DashboardViewModel(IWorkOrderService workOrderService)
+    public string UserName => _session.CurrentUser?.DisplayName ?? "User";
+    public string RoleName => _session.CurrentUser?.Role.ToString() ?? string.Empty;
+
+    public DashboardViewModel(IContosoDataService data, IAppSession session)
     {
-        _workOrderService = workOrderService;
+        _data = data;
+        _session = session;
     }
 
     [ObservableProperty]
@@ -27,7 +32,7 @@ public partial class DashboardViewModel : ObservableObject
 
     public async Task LoadCountsAsync()
     {
-        var all = await _workOrderService.GetWorkOrdersAsync();
+        var all = await _data.GetTasksAsync(_session.CurrentUser?.UserId ?? 0);
 
         if (all == null)
         {
@@ -37,10 +42,8 @@ public partial class DashboardViewModel : ObservableObject
             return;
         }
 
-        CompletedCount = all.Count(w => string.Equals(w.Status, "Completed", StringComparison.OrdinalIgnoreCase));
-        PendingCount = all.Count(w => string.Equals(w.Status, "Pending", StringComparison.OrdinalIgnoreCase));
-        // Open = not completed
-        OpenCount = all.Count(w => !string.Equals(w.Status, "Completed", StringComparison.OrdinalIgnoreCase) &&
-                            !string.Equals(w.Status, "Pending", StringComparison.OrdinalIgnoreCase));
+        CompletedCount = all.Count(w => w.Status == Models.TaskStatus.Completed);
+        PendingCount = all.Count(w => w.Status == Models.TaskStatus.NotStarted);
+        OpenCount = all.Count(w => w.Status == Models.TaskStatus.InProgress);
     }
 }

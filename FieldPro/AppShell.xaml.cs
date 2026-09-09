@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FieldPro;
+namespace ContosoDashboard;
 
 public partial class AppShell : Shell
 {
@@ -9,13 +9,6 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-        Routing.RegisterRoute(
-            "WorkOrders",
-            typeof(Views.WorkOrdersPage));
-
-        Routing.RegisterRoute(
-            "WorkOrderDetails",
-            typeof(Views.WorkOrderDetailsPage));
     }
 
     private async void OnReseedClicked(object sender, EventArgs e)
@@ -24,19 +17,16 @@ public partial class AppShell : Shell
         {
 #if DEBUG
             var services = App.Current?.Handler?.MauiContext?.Services;
-            var seeder = services?.GetService<FieldPro.Data.DatabaseSeeder>();
-            var database = services?.GetService<FieldPro.Data.FieldProDatabase>();
+            var database = services?.GetService<Data.ContosoDatabase>();
 
-            if (seeder == null || database == null)
+            if (database == null)
             {
                 await Shell.Current.DisplayAlertAsync("Reseed", "Seeder or database not available.", "OK");
                 return;
             }
 
             await database.InitializeAsync();
-            await seeder.ForceSeedAsync(database);
-
-            await Shell.Current.DisplayAlertAsync("Reseed", "Database reseeded from seed.json.", "OK");
+            await Shell.Current.DisplayAlertAsync("Database", "SQLite database initialized.", "OK");
 
             // Navigate to Dashboard so counts will refresh
             await Shell.Current.GoToAsync("//Dashboard");
@@ -56,7 +46,7 @@ public partial class AppShell : Shell
         {
             // Resolve services from the MAUI service provider
             var services = App.Current?.Handler?.MauiContext?.Services;
-            var appSession = services?.GetService<FieldPro.Services.IAppSession>();
+            var appSession = services?.GetService<Services.IAppSession>();
 
             appSession?.Logout();
 

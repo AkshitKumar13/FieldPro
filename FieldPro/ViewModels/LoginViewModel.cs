@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FieldPro.Services;
+using ContosoDashboard.Models;
+using ContosoDashboard.Services;
+using System.Collections.ObjectModel;
 
-namespace FieldPro.ViewModels;
+namespace ContosoDashboard.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
@@ -10,10 +12,9 @@ public partial class LoginViewModel : ObservableObject
     private readonly IAppSession _appSession;
 
     [ObservableProperty]
-    private string email = string.Empty;
+    private User? selectedUser;
 
-    [ObservableProperty]
-    private string password = string.Empty;
+    public ObservableCollection<User> Users { get; } = new();
 
     [ObservableProperty]
     private bool isBusy;
@@ -24,12 +25,18 @@ public partial class LoginViewModel : ObservableObject
     public bool HasError =>
         !string.IsNullOrWhiteSpace(ErrorMessage);
 
-    public LoginViewModel(
-        IAuthService authService,
-        IAppSession appSession)
+    public LoginViewModel(IAuthService authService, IAppSession appSession, ContosoDashboard.Data.ContosoDatabase database)
     {
         _authService = authService;
         _appSession = appSession;
+        _ = LoadUsersAsync(database);
+    }
+
+    private async Task LoadUsersAsync(ContosoDashboard.Data.ContosoDatabase database)
+    {
+        await database.InitializeAsync();
+        foreach (var user in await database.GetUsersAsync()) Users.Add(user);
+        SelectedUser = Users.FirstOrDefault();
     }
 
     partial void OnErrorMessageChanged(string value)
@@ -48,25 +55,22 @@ public partial class LoginViewModel : ObservableObject
             IsBusy = true;
             ErrorMessage = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(Email) ||
-                string.IsNullOrWhiteSpace(Password))
+            if (SelectedUser is null)
             {
                 ErrorMessage = "Please enter email and password.";
                 return;
             }
 
-            var success = await _authService.LoginAsync(
-                Email,
-                Password);
+            var user = await _authService.LoginAsync(SelectedUser.Email);
 
-            if (!success)
+            if (user is null)
             {
                 ErrorMessage = "Invalid email or password.";
                 return;
             }
 
             // IMPORTANT: Set session as authenticated
-            _appSession.Login();
+            _appSession.Login(user);
 
             // Navigate to Main -> Dashboard
             await Shell.Current.GoToAsync("//Main/Dashboard");

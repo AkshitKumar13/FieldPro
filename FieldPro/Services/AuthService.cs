@@ -1,33 +1,26 @@
-﻿namespace FieldPro.Services;
+﻿using ContosoDashboard.Data;
+using ContosoDashboard.Models;
+
+namespace ContosoDashboard.Services;
 
 public class AuthService : IAuthService
 {
-    private bool _isAuthenticated;
+    private readonly ContosoDatabase _database;
 
-    public Task<bool> LoginAsync(string email, string password)
+    public AuthService(ContosoDatabase database) => _database = database;
+
+    public async Task<User?> LoginAsync(string email)
     {
-        // Temporary mock authentication.
-        // We will replace this with API/JWT authentication later.
-
-        if (email == "admin@test.com" &&
-            password == "Password123")
-        {
-            _isAuthenticated = true;
-            return Task.FromResult(true);
-        }
-
-        return Task.FromResult(false);
+        return (await _database.GetUsersAsync()).FirstOrDefault(x => x.Email == email);
     }
 
     public Task LogoutAsync()
     {
-        _isAuthenticated = false;
-
         return Task.CompletedTask;
     }
 
     public Task<bool> IsAuthenticatedAsync()
     {
-        return Task.FromResult(_isAuthenticated);
+        return Task.FromResult(false);
     }
 }

@@ -1,16 +1,20 @@
-namespace FieldPro.Services;
+using ContosoDashboard.Models;
+
+namespace ContosoDashboard.Services;
 
 public class AppSession : IAppSession
 {
-    public bool IsAuthenticated { get; private set; }
+    public bool IsAuthenticated => CurrentUser is not null;
 
-    public void Login()
+    public User? CurrentUser { get; private set; }
+
+    public void Login(User user)
     {
-        IsAuthenticated = true;
+        CurrentUser = user;
     }
 
     public void Logout()
     {
-        IsAuthenticated = false;
+        CurrentUser = null;
     }
 }

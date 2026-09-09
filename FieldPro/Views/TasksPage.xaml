@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="ContosoDashboard.Views.TasksPage" Title="Tasks">
+	<Grid RowDefinitions="Auto,*" Padding="20" RowSpacing="16">
+		<Border Grid.Row="0" Padding="14" Stroke="#D9E1E8">
+			<VerticalStackLayout Spacing="8">
+				<Label Text="Create and assign a task" FontSize="18" FontAttributes="Bold" />
+				<Entry Placeholder="Task title" Text="{Binding NewTitle}" />
+				<Editor Placeholder="Description" Text="{Binding NewDescription}" AutoSize="TextChanges" />
+				<Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+					<Picker Title="Assignee" ItemsSource="{Binding Users}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedAssignee}" />
+					<Picker Grid.Column="1" Title="Project" ItemsSource="{Binding Projects}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedProject}" />
+				</Grid>
+				<Button Text="Add task" Clicked="OnAddTaskClicked" />
+			</VerticalStackLayout>
+		</Border>
+		<CollectionView Grid.Row="1" ItemsSource="{Binding Items}">
+			<CollectionView.ItemTemplate>
+				<DataTemplate>
+					<Border Padding="14" Margin="0,0,0,10" Stroke="#D9E1E8">
+						<VerticalStackLayout Spacing="5">
+							<Label Text="{Binding Title}" FontSize="17" FontAttributes="Bold" />
+							<Label Text="{Binding Description}" />
+							<Label Text="{Binding DueDate, StringFormat='Due {0:d}'}" TextColor="#5F6B7A" />
+							<Picker Title="Reassign task" ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.Users}" ItemDisplayBinding="{Binding DisplayName}" SelectedIndexChanged="OnAssigneeChanged" />
+							<Picker Title="Update status" ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.Statuses}" SelectedItem="{Binding Status}" SelectedIndexChanged="OnStatusChanged" />
+						</VerticalStackLayout>
+					</Border>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+	</Grid>
+</ContentPage>

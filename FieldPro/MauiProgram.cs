@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Maui;
-using FieldPro.Services;
-using FieldPro.Data;
-using FieldPro.ViewModels;
-using FieldPro.Views;
+using ContosoDashboard.Services;
+using ContosoDashboard.Data;
+using ContosoDashboard.ViewModels;
+using ContosoDashboard.Views;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 // Note: run DB initialization/seeding asynchronously to avoid blocking the UI thread on Android.
 
-namespace FieldPro
+namespace ContosoDashboard
 {
     public static class MauiProgram
     {
@@ -26,22 +26,22 @@ namespace FieldPro
             builder.Logging.AddDebug();
 #endif
             //services
-            builder.Services.AddSingleton<FieldProDatabase>();
+            builder.Services.AddSingleton<ContosoDatabase>();
+            builder.Services.AddSingleton<IContosoDataService>(sp => sp.GetRequiredService<ContosoDatabase>());
             builder.Services.AddSingleton<IAppSession, AppSession>();
-            builder.Services.AddSingleton<DatabaseSeeder>();
-
             builder.Services.AddSingleton<IAuthService, AuthService>();
-            builder.Services.AddSingleton<IWorkOrderService, WorkOrderService>();
 
             //pages/models
             builder.Services.AddTransient<LoginViewModel>();
-            builder.Services.AddTransient<WorkOrdersViewModel>();
             builder.Services.AddTransient<DashboardViewModel>();
             builder.Services.AddTransient<LoginPage>();
-            builder.Services.AddTransient<WorkOrdersPage>();
             builder.Services.AddTransient<DashboardPage>();
-            builder.Services.AddTransient<WorkOrderDetailsViewModel>();
-            builder.Services.AddTransient<WorkOrderDetailsPage>();
+            builder.Services.AddTransient<TasksPage>();
+            builder.Services.AddTransient<ProjectsPage>();
+            builder.Services.AddTransient<TeamPage>();
+            builder.Services.AddTransient<NotificationsPage>();
+            builder.Services.AddTransient<DocumentsPage>();
+            builder.Services.AddTransient<ProfilePage>();
             var mauiApp = builder.Build();
 
             // Start DB initialization/seeding on a background task so we don't block startup (avoids Android deadlocks).
@@ -49,17 +49,12 @@ namespace FieldPro
             {
                 try
                 {
-                    var database = mauiApp.Services.GetService<FieldPro.Data.FieldProDatabase>();
-                    var seeder = mauiApp.Services.GetService<FieldPro.Data.DatabaseSeeder>();
+                    var database = mauiApp.Services.GetService<ContosoDatabase>();
 
                     if (database != null)
                     {
                         await database.InitializeAsync();
 
-                        if (seeder != null)
-                        {
-                            await seeder.SeedAsync(database);
-                        }
                     }
                 }
                 catch (Exception ex)

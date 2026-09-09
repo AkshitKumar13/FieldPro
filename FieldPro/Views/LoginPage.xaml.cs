@@ -1,6 +1,6 @@
-using FieldPro.ViewModels;
+using ContosoDashboard.ViewModels;
 
-namespace FieldPro.Views;
+namespace ContosoDashboard.Views;
 
 public partial class LoginPage : ContentPage
 {

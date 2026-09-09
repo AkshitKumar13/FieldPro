@@ -1,8 +1,10 @@
-﻿namespace FieldPro.Services;
+﻿using ContosoDashboard.Models;
+
+namespace ContosoDashboard.Services;
 
 public interface IAuthService
 {
-    Task<bool> LoginAsync(string email, string password);
+    Task<User?> LoginAsync(string email);
 
     Task LogoutAsync();
 
