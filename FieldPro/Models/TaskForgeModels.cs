@@ -1,6 +1,6 @@
 using SQLite;
 
-namespace ContosoDashboard.Models;
+namespace TaskForge.Models;
 
 public enum UserRole { Employee, TeamLead, ProjectManager, Administrator }
 public enum AvailabilityStatus { Available, Busy, InMeeting, OutOfOffice }
@@ -20,7 +20,7 @@ public class User
     public bool InAppNotificationsEnabled { get; set; } = true;
 }
 
-public class ContosoTask
+public class TaskItem
 {
     [PrimaryKey, AutoIncrement] public int TaskId { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -67,7 +67,7 @@ public class Notification
     public bool IsRead { get; set; }
 }
 
-public class ContosoDocument
+public class TaskForgeDocument
 {
     [PrimaryKey, AutoIncrement] public int DocumentId { get; set; }
     public string Title { get; set; } = string.Empty;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="ContosoDashboard.Views.TasksPage" Title="Tasks">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TaskForge.Views.TasksPage" Title="Tasks">
 	<Grid RowDefinitions="Auto,*" Padding="20" RowSpacing="16">
 		<Border Grid.Row="0" Padding="14" Stroke="#D9E1E8" IsVisible="{Binding CanAssignTasks}">
 			<VerticalStackLayout Spacing="8">

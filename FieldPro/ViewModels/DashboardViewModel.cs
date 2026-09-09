@@ -1,18 +1,18 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using ContosoDashboard.Services;
+using TaskForge.Services;
 using System.Threading.Tasks;
 
-namespace ContosoDashboard.ViewModels;
+namespace TaskForge.ViewModels;
 
 public partial class DashboardViewModel : ObservableObject
 {
-    private readonly IContosoDataService _data;
+    private readonly ITaskForgeDataService _data;
     private readonly IAppSession _session;
 
     public string UserName => _session.CurrentUser?.DisplayName ?? "User";
     public string RoleName => _session.CurrentUser?.Role.ToString() ?? string.Empty;
 
-    public DashboardViewModel(IContosoDataService data, IAppSession session)
+    public DashboardViewModel(ITaskForgeDataService data, IAppSession session)
     {
         _data = data;
         _session = session;

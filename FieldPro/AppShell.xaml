@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Shell
-    x:Class="ContosoDashboard.AppShell"
+    x:Class="TaskForge.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:views="clr-namespace:ContosoDashboard.Views">
+    xmlns:views="clr-namespace:TaskForge.Views">
 
     <!-- Login -->
     <ShellContent
@@ -13,7 +13,7 @@
 
     <!-- Main application -->
     <FlyoutItem
-        Title="Contoso Dashboard"
+        Title="TaskForge"
         Route="Main">
 
         <ShellContent

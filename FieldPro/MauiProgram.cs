@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Maui;
-using ContosoDashboard.Services;
-using ContosoDashboard.Data;
-using ContosoDashboard.ViewModels;
-using ContosoDashboard.Views;
+using CommunityToolkit.Maui;
+using TaskForge.Services;
+using TaskForge.Data;
+using TaskForge.ViewModels;
+using TaskForge.Views;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 // Note: run DB initialization/seeding asynchronously to avoid blocking the UI thread on Android.
 
-namespace ContosoDashboard
+namespace TaskForge
 {
     public static class MauiProgram
     {
@@ -26,8 +26,8 @@ namespace ContosoDashboard
             builder.Logging.AddDebug();
 #endif
             //services
-            builder.Services.AddSingleton<ContosoDatabase>();
-            builder.Services.AddSingleton<IContosoDataService>(sp => sp.GetRequiredService<ContosoDatabase>());
+            builder.Services.AddSingleton<TaskForgeDatabase>();
+            builder.Services.AddSingleton<ITaskForgeDataService>(sp => sp.GetRequiredService<TaskForgeDatabase>());
             builder.Services.AddSingleton<IAppSession, AppSession>();
             builder.Services.AddSingleton<IAuthService, AuthService>();
 
@@ -49,7 +49,7 @@ namespace ContosoDashboard
             {
                 try
                 {
-                    var database = mauiApp.Services.GetService<ContosoDatabase>();
+                    var database = mauiApp.Services.GetService<TaskForgeDatabase>();
 
                     if (database != null)
                     {

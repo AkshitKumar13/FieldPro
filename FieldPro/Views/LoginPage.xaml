@@ -3,7 +3,7 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="ContosoDashboard.Views.LoginPage"
+    x:Class="TaskForge.Views.LoginPage"
     Title="Login">
 
     <ScrollView>
@@ -14,7 +14,7 @@
             VerticalOptions="Center">
 
             <Label
-                Text="Contoso Dashboard"
+                Text="TaskForge"
                 FontSize="36"
                 FontAttributes="Bold"
                 HorizontalOptions="Center" />

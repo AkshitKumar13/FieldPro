@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace ContosoDashboard
+namespace TaskForge
 {
     public partial class App : Application
     {

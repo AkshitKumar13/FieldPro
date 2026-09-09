@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="ContosoDashboard.Views.DashboardPage" Title="Dashboard">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TaskForge.Views.DashboardPage" Title="Dashboard">
     <ScrollView><VerticalStackLayout Padding="24" Spacing="18">
-        <Label Text="CONTOSO DASHBOARD" FontSize="13" CharacterSpacing="2" TextColor="#5F6B7A" />
+        <Label Text="TASKFORGE" FontSize="13" CharacterSpacing="2" TextColor="#5F6B7A" />
         <Label Text="Welcome back" FontSize="30" FontAttributes="Bold" />
         <Label Text="{Binding UserName}" FontSize="18" TextColor="#315C7D" />
         <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">

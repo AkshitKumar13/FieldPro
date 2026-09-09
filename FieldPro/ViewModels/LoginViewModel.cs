@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ContosoDashboard.Models;
-using ContosoDashboard.Services;
+using TaskForge.Models;
+using TaskForge.Services;
 using System.Collections.ObjectModel;
 
-namespace ContosoDashboard.ViewModels;
+namespace TaskForge.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
@@ -25,14 +25,14 @@ public partial class LoginViewModel : ObservableObject
     public bool HasError =>
         !string.IsNullOrWhiteSpace(ErrorMessage);
 
-    public LoginViewModel(IAuthService authService, IAppSession appSession, ContosoDashboard.Data.ContosoDatabase database)
+    public LoginViewModel(IAuthService authService, IAppSession appSession, TaskForge.Data.TaskForgeDatabase database)
     {
         _authService = authService;
         _appSession = appSession;
         _ = LoadUsersAsync(database);
     }
 
-    private async Task LoadUsersAsync(ContosoDashboard.Data.ContosoDatabase database)
+    private async Task LoadUsersAsync(TaskForge.Data.TaskForgeDatabase database)
     {
         await database.InitializeAsync();
         foreach (var user in await database.GetUsersAsync()) Users.Add(user);

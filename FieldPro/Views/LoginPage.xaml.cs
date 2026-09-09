@@ -1,6 +1,6 @@
-using ContosoDashboard.ViewModels;
+using TaskForge.ViewModels;
 
-namespace ContosoDashboard.Views;
+namespace TaskForge.Views;
 
 public partial class LoginPage : ContentPage
 {

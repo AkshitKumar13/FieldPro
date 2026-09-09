@@ -1,6 +1,6 @@
-using ContosoDashboard.Models;
+using TaskForge.Models;
 
-namespace ContosoDashboard.Services;
+namespace TaskForge.Services;
 
 public class AppSession : IAppSession
 {

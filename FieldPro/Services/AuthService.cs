@@ -1,13 +1,13 @@
-﻿using ContosoDashboard.Data;
-using ContosoDashboard.Models;
+using TaskForge.Data;
+using TaskForge.Models;
 
-namespace ContosoDashboard.Services;
+namespace TaskForge.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly ContosoDatabase _database;
+    private readonly TaskForgeDatabase _database;
 
-    public AuthService(ContosoDatabase database) => _database = database;
+    public AuthService(TaskForgeDatabase database) => _database = database;
 
     public async Task<User?> LoginAsync(string email)
     {

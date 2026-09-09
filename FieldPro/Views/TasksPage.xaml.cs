@@ -1,21 +1,21 @@
-using ContosoDashboard.Models;
-using ContosoDashboard.Services;
+using TaskForge.Models;
+using TaskForge.Services;
 using System.Collections.ObjectModel;
-using ContosoTaskStatus = ContosoDashboard.Models.TaskStatus;
-namespace ContosoDashboard.Views;
+using TaskItemStatus = TaskForge.Models.TaskStatus;
+namespace TaskForge.Views;
 public partial class TasksPage : ContentPage
 {
-    private readonly IContosoDataService _data; private readonly IAppSession _session;
-    public ObservableCollection<ContosoTask> Items { get; } = new();
+    private readonly ITaskForgeDataService _data; private readonly IAppSession _session;
+    public ObservableCollection<TaskItem> Items { get; } = new();
     public ObservableCollection<User> Users { get; } = new();
     public ObservableCollection<Project> Projects { get; } = new();
-    public IReadOnlyList<ContosoTaskStatus> Statuses { get; } = Enum.GetValues<ContosoTaskStatus>();
+    public IReadOnlyList<TaskItemStatus> Statuses { get; } = Enum.GetValues<TaskItemStatus>();
     public string NewTitle { get; set; } = string.Empty;
     public string NewDescription { get; set; } = string.Empty;
     public User? SelectedAssignee { get; set; }
     public Project? SelectedProject { get; set; }
     public bool CanAssignTasks => _session.CurrentUser is { Role: UserRole.ProjectManager or UserRole.TeamLead };
-    public TasksPage(IContosoDataService data, IAppSession session) { InitializeComponent(); _data = data; _session = session; BindingContext = this; }
+    public TasksPage(ITaskForgeDataService data, IAppSession session) { InitializeComponent(); _data = data; _session = session; BindingContext = this; }
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -51,7 +51,7 @@ public partial class TasksPage : ContentPage
             return;
         }
 
-        await _data.AddTaskAsync(new ContosoTask
+        await _data.AddTaskAsync(new TaskItem
         {
             Title = NewTitle.Trim(),
             Description = NewDescription.Trim(),
@@ -66,7 +66,7 @@ public partial class TasksPage : ContentPage
         await ReloadTasksAsync();
     }
 
-    private async void OnStatusChanged(object sender, EventArgs e) { if (sender is Picker { BindingContext: ContosoTask task }) await _data.UpdateTaskStatusAsync(task.TaskId, task.Status); }
+    private async void OnStatusChanged(object sender, EventArgs e) { if (sender is Picker { BindingContext: TaskItem task }) await _data.UpdateTaskStatusAsync(task.TaskId, task.Status); }
     private async void OnAssigneeChanged(object sender, EventArgs e)
     {
         if (!CanAssignTasks)
@@ -75,7 +75,7 @@ public partial class TasksPage : ContentPage
             return;
         }
 
-        if (sender is Picker { BindingContext: ContosoTask task, SelectedItem: User user })
+        if (sender is Picker { BindingContext: TaskItem task, SelectedItem: User user })
         {
             await _data.AssignTaskAsync(task.TaskId, user.UserId, _session.CurrentUser!.UserId);
             task.AssignedUserId = user.UserId;

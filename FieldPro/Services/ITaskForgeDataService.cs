@@ -1,22 +1,22 @@
-using ContosoDashboard.Models;
-using ContosoTaskStatus = ContosoDashboard.Models.TaskStatus;
+using TaskForge.Models;
+using TaskItemStatus = TaskForge.Models.TaskStatus;
 
-namespace ContosoDashboard.Services;
+namespace TaskForge.Services;
 
-public interface IContosoDataService
+public interface ITaskForgeDataService
 {
     Task<List<User>> GetUsersAsync();
     Task<User?> GetUserAsync(int id);
-    Task<List<ContosoTask>> GetTasksAsync(int userId);
-    Task<List<ContosoTask>> GetAllTasksAsync();
-    Task<int> AddTaskAsync(ContosoTask task, int assignedByUserId);
+    Task<List<TaskItem>> GetTasksAsync(int userId);
+    Task<List<TaskItem>> GetAllTasksAsync();
+    Task<int> AddTaskAsync(TaskItem task, int assignedByUserId);
     Task AssignTaskAsync(int taskId, int userId, int assignedByUserId);
     Task<List<Project>> GetProjectsAsync(int userId);
     Task<List<ProjectMember>> GetProjectMembersAsync(int projectId);
     Task<List<Announcement>> GetAnnouncementsAsync();
     Task<List<Notification>> GetNotificationsAsync(int userId);
-    Task<List<ContosoDocument>> GetDocumentsAsync(int userId);
-    Task UpdateTaskStatusAsync(int taskId, ContosoTaskStatus status);
+    Task<List<TaskForgeDocument>> GetDocumentsAsync(int userId);
+    Task UpdateTaskStatusAsync(int taskId, TaskItemStatus status);
     Task MarkNotificationReadAsync(int notificationId);
     Task UpdateUserAsync(User user);
 }

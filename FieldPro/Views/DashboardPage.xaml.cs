@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 
-using ContosoDashboard.Services;
-using ContosoDashboard.ViewModels;
+using TaskForge.Services;
+using TaskForge.ViewModels;
 
-namespace ContosoDashboard.Views;
+namespace TaskForge.Views;
 
 public partial class DashboardPage : ContentPage
 {

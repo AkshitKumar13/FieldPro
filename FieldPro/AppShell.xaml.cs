@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ContosoDashboard;
+namespace TaskForge;
 
 public partial class AppShell : Shell
 {
@@ -17,7 +17,7 @@ public partial class AppShell : Shell
         {
 #if DEBUG
             var services = App.Current?.Handler?.MauiContext?.Services;
-            var database = services?.GetService<Data.ContosoDatabase>();
+            var database = services?.GetService<Data.TaskForgeDatabase>();
 
             if (database == null)
             {
