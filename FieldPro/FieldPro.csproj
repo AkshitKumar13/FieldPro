@@ -65,11 +65,15 @@
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 		<!-- Ensure seed.json is explicitly packaged for Windows output folders -->
 		<MauiAsset Include="Resources\Raw\seed.json" LogicalName="seed.json" />
+		<MauiAsset Include="Resources\Raw\auth-seed.json" LogicalName="auth-seed.json" />
 	</ItemGroup>
 
 	<!-- Ensure seed.json is copied to build output for platforms that expect it in output folders -->
 	<ItemGroup>
 	  <None Include="Resources\Raw\seed.json">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="Resources\Raw\auth-seed.json">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
@@ -79,6 +83,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.100" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
 	</ItemGroup>
 

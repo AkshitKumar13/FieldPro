@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FieldPro POC and High-Level Architecture</title>
+<style>
+@page { size: A4; margin: 16mm 15mm; }
+:root { --ink:#17202a; --muted:#5d6b78; --blue:#1769aa; --teal:#087f8c; --gold:#b56b00; --line:#c9d6df; --pale:#eef5f8; }
+* { box-sizing:border-box; }
+body { font-family: Arial, Helvetica, sans-serif; color:var(--ink); font-size:10.5pt; line-height:1.45; margin:0; }
+h1 { font-size:28pt; line-height:1.05; margin:0 0 8px; color:#12344d; }
+h2 { font-size:16pt; color:#12344d; border-bottom:2px solid var(--blue); padding-bottom:4px; margin:22px 0 10px; }
+h3 { font-size:11.5pt; color:#12344d; margin:12px 0 4px; }
+p { margin:5px 0 9px; }
+.small { color:var(--muted); font-size:9pt; }
+.cover { min-height:245mm; display:flex; flex-direction:column; justify-content:center; }
+.kicker { text-transform:uppercase; letter-spacing:1.5px; color:var(--teal); font-size:9pt; font-weight:bold; margin-bottom:14px; }
+.subtitle { font-size:15pt; color:var(--muted); max-width:140mm; }
+.meta { margin-top:35mm; border-top:1px solid var(--line); padding-top:12px; color:var(--muted); }
+.badge { display:inline-block; background:#e6f2f3; color:#08636c; padding:4px 8px; border-radius:3px; font-weight:bold; font-size:9pt; }
+.page-break { page-break-before:always; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.card { border:1px solid var(--line); border-left:4px solid var(--blue); padding:9px 11px; break-inside:avoid; }
+.card.teal { border-left-color:var(--teal); }
+.card.gold { border-left-color:var(--gold); }
+.card h3 { margin-top:0; }
+ul { margin:5px 0 8px 19px; padding:0; }
+li { margin:3px 0; }
+.arch { border:1px solid var(--line); background:#f8fbfc; padding:13px; margin:12px 0; }
+.layer { display:flex; align-items:stretch; gap:8px; margin:8px 0; }
+.layer-label { width:31mm; background:#12344d; color:white; padding:9px 7px; font-size:9pt; font-weight:bold; display:flex; align-items:center; }
+.nodes { flex:1; display:flex; gap:8px; }
+.node { flex:1; background:white; border:1px solid #9fb5c3; padding:8px; min-height:44px; }
+.node strong { display:block; color:var(--blue); font-size:9.5pt; }
+.arrow { text-align:center; color:var(--teal); font-size:16pt; line-height:18px; }
+.flow { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; align-items:center; margin:12px 0; }
+.step { background:var(--pale); border:1px solid #a9c5d0; padding:8px 5px; text-align:center; font-size:8.5pt; min-height:55px; }
+.step b { display:block; color:#12344d; margin-bottom:3px; }
+.flow .arr { text-align:center; color:var(--teal); font-size:15pt; }
+table { border-collapse:collapse; width:100%; margin:8px 0 12px; font-size:9.5pt; }
+th { background:#12344d; color:white; text-align:left; }
+th, td { border:1px solid var(--line); padding:7px; vertical-align:top; }
+tr:nth-child(even) td { background:#f5f8fa; }
+.note { background:#fff6e5; border:1px solid #e5c27b; padding:9px 11px; margin:10px 0; }
+.status { display:inline-block; padding:3px 6px; border-radius:3px; font-size:8.5pt; font-weight:bold; white-space:nowrap; }
+.done { background:#e4f3ea; color:#176b3a; }
+.partial { background:#fff3d8; color:#885600; }
+.gap { background:#fbe8e8; color:#9a3030; }
+.footer { color:var(--muted); font-size:8.5pt; margin-top:18px; border-top:1px solid var(--line); padding-top:5px; }
+</style>
+</head>
+<body>
+<section class="cover">
+  <div class="kicker">FieldPro | Proof of Concept</div>
+  <h1>FieldPro POC and MAUI Learning Architecture</h1>
+  <p class="subtitle">Implementation mapping for XAML, MVVM, mobile architecture, and platform integration.</p>
+  <p><span class="badge">Prepared 10 September 2026</span></p>
+  <div class="meta">
+    <p><strong>Scope:</strong> Phase 1 UI foundation, Phase 2 mobile architecture, and Phase 3 platform integration.</p>
+    <p><strong>Status:</strong> current repository implementation mapped against the training objectives.</p>
+  </div>
+</section>
+
+<section class="page-break">
+<h2>1. Executive Summary</h2>
+<p>FieldPro is a cross-platform .NET MAUI field-service application. The current POC provides a login experience, a dashboard, work-order data, and logout behavior. Authentication is implemented locally for the POC using Entity Framework Core with SQLite and secure device storage.</p>
+<div class="grid">
+  <div class="card"><h3>Implemented</h3><ul><li>MAUI UI with Shell navigation.</li><li>Login and logout workflow.</li><li>EF Core SQLite user store.</li><li>PBKDF2 password hashing with per-user salt.</li><li>SecureStorage-backed authenticated user ID.</li><li>SQLite work-order persistence and seed data.</li></ul></div>
+  <div class="card teal"><h3>POC Boundaries</h3><ul><li>Authentication is device-local, not server-backed.</li><li>One development user is seeded from JSON.</li><li>No registration, password reset, roles, refresh tokens, or remote API yet.</li><li>Work orders currently use the existing sqlite-net data layer.</li></ul></div>
+</div>
+<h2>2. POC Goals</h2>
+<table><tr><th>Goal</th><th>Result</th></tr>
+<tr><td>Prove a real login flow</td><td>Credentials are verified against an EF Core user record instead of a hard-coded conditional.</td></tr>
+<tr><td>Keep passwords out of the database in plain text</td><td>Passwords are transformed with PBKDF2-SHA256, 100,000 iterations, a random 16-byte salt, and a 32-byte derived key.</td></tr>
+<tr><td>Keep the session across app navigation</td><td>The authenticated user ID is stored in platform-backed MAUI SecureStorage.</td></tr>
+<tr><td>Provide reliable logout</td><td>Logout removes the secure user ID and clears the in-memory application session.</td></tr>
+</table>
+</section>
+
+<section class="page-break">
+<h2>3. Phase Implementation Map</h2>
+<p>This matrix maps the requested learning objectives to the code currently present in FieldPro. Status is based on observable implementation in the repository.</p>
+<table><tr><th>Phase</th><th>Capability</th><th>Status</th><th>Current implementation</th></tr>
+<tr><td rowspan="6"><strong>Phase 1</strong><br>UI Foundation</td><td>XAML fundamentals</td><td><span class="status done">Implemented</span></td><td>Pages use XAML namespaces, controls, bindings, and nested visual-element hierarchies.</td></tr>
+<tr><td>Layouts and controls</td><td><span class="status partial">Partial</span></td><td><strong>Grid</strong>, <strong>VerticalStackLayout</strong>, <strong>ScrollView</strong>, <strong>Border</strong>, <strong>Entry</strong>, <strong>Button</strong>, and <strong>ActivityIndicator</strong> are used. FlexLayout and AbsoluteLayout are not currently used.</td></tr>
+<tr><td>MVVM separation</td><td><span class="status done">Implemented</span></td><td>Login, dashboard, work-order list, and work-order details have dedicated ViewModels and injected services.</td></tr>
+<tr><td>Data binding</td><td><span class="status done">Implemented</span></td><td>XAML binds to ViewModel properties such as <strong>Email</strong>, <strong>Password</strong>, counts, status, busy state, and error visibility.</td></tr>
+<tr><td>Commands</td><td><span class="status done">Implemented</span></td><td>CommunityToolkit <strong>[RelayCommand]</strong> generates commands for login, work-order actions, refresh, and camera completion.</td></tr>
+<tr><td>Property change notification</td><td><span class="status done">Implemented</span></td><td>CommunityToolkit <strong>[ObservableProperty]</strong> generates observable properties and notification code.</td></tr>
+<tr><td rowspan="5"><strong>Phase 2</strong><br>Mobile Architecture</td><td>Shell navigation</td><td><span class="status done">Implemented</span></td><td>AppShell defines Login and Main routes; work-order details use Shell route navigation and <strong>QueryProperty</strong>.</td></tr>
+<tr><td>Lifecycle and state</td><td><span class="status partial">Partial</span></td><td>Pages use <strong>OnAppearing</strong> for loading and UI state. Explicit OnStart, OnSleep, and OnResume handling is not yet implemented.</td></tr>
+<tr><td>Dependency injection</td><td><span class="status done">Implemented</span></td><td>MauiProgram registers databases, services, ViewModels, and pages using Microsoft.Extensions.DependencyInjection.</td></tr>
+<tr><td>Local storage</td><td><span class="status done">Implemented</span></td><td>sqlite-net stores work orders, EF Core SQLite stores users, FileSystem stores captured photos, and SecureStorage stores the local user ID.</td></tr>
+<tr><td>Offline-first behavior</td><td><span class="status partial">Partial</span></td><td>Local persistence exists, but synchronization, conflict resolution, and an offline queue are not yet implemented.</td></tr>
+<tr><td rowspan="4"><strong>Phase 3</strong><br>Platform Integration</td><td>Device capabilities</td><td><span class="status partial">Partial</span></td><td>MediaPicker captures completion photos and FileSystem stores them. GPS and accelerometer integration are not present.</td></tr>
+<tr><td>Permissions</td><td><span class="status gap">Gap</span></td><td>Camera availability is checked, but explicit runtime permission request and denial handling are not yet implemented.</td></tr>
+<tr><td>Platform-specific customization</td><td><span class="status gap">Gap</span></td><td>No custom handlers, mappers, or platform compiler directives are currently used in the application code.</td></tr>
+<tr><td>Responsive UI</td><td><span class="status partial">Partial</span></td><td>Grid and adaptive MAUI layouts provide a base; OnPlatform, OnIdiom, and dedicated phone/tablet/desktop resources are not yet used.</td></tr>
+</table>
+<div class="note"><strong>Training conclusion:</strong> Phase 1 is the strongest current implementation. Phase 2 is substantially represented through Shell, DI, and local persistence. Phase 3 is started with camera capture but needs explicit permissions and platform-specific work to be complete.</div>
+</section>
+
+<section class="page-break">
+<h2>4. High-Level Architecture</h2>
+<div class="arch">
+  <div class="layer"><div class="layer-label">Presentation</div><div class="nodes"><div class="node"><strong>LoginPage</strong>Credential input and validation</div><div class="node"><strong>DashboardPage</strong>Operational summary</div><div class="node"><strong>WorkOrdersPage</strong>Work-order workflow</div></div></div>
+  <div class="arrow">&#8595;</div>
+  <div class="layer"><div class="layer-label">View Models</div><div class="nodes"><div class="node"><strong>LoginViewModel</strong>Command and error state</div><div class="node"><strong>DashboardViewModel</strong>Counts and status</div><div class="node"><strong>WorkOrdersViewModel</strong>List and actions</div></div></div>
+  <div class="arrow">&#8595;</div>
+  <div class="layer"><div class="layer-label">Services</div><div class="nodes"><div class="node"><strong>AuthService</strong>Login, logout, verification</div><div class="node"><strong>WorkOrderService</strong>Work-order operations</div><div class="node"><strong>AppSession</strong>Runtime session state</div></div></div>
+  <div class="arrow">&#8595;</div>
+  <div class="layer"><div class="layer-label">Persistence</div><div class="nodes"><div class="node"><strong>AuthDbContext</strong>EF Core SQLite user store</div><div class="node"><strong>FieldProDatabase</strong>sqlite-net work-order store</div><div class="node"><strong>SecureStorage</strong>Platform-protected user ID</div></div></div>
+</div>
+<p class="small">Dependency injection is configured in <strong>MauiProgram</strong>. Shell controls route access and the logout menu action. Database initialization runs during startup on a background task.</p>
+<h3>Authentication Request Flow</h3>
+<div class="flow">
+  <div class="step"><b>1. Enter</b>User submits email and password</div><div class="arr">&#8594;</div>
+  <div class="step"><b>2. Query</b>AuthService loads active EF user</div><div class="arr">&#8594;</div>
+  <div class="step"><b>3. Verify</b>PBKDF2 hash comparison</div>
+</div>
+<div class="flow">
+  <div class="step"><b>4. Persist</b>Store user ID in SecureStorage</div><div class="arr">&#8594;</div>
+  <div class="step"><b>5. Session</b>Mark AppSession authenticated</div><div class="arr">&#8594;</div>
+  <div class="step"><b>6. Navigate</b>Open Main/Dashboard</div>
+</div>
+<h3>Logout Flow</h3>
+<p>Shell resolves <strong>IAuthService</strong>, removes the SecureStorage user ID, clears <strong>IAppSession</strong>, and navigates to the login route with a cleared stack.</p>
+</section>
+
+<section class="page-break">
+<h2>5. Data and Security Design</h2>
+<div class="grid">
+  <div class="card"><h3>Auth database</h3><p>EF Core uses a dedicated SQLite file named <strong>fieldpro-auth.db3</strong>. The <strong>User</strong> entity contains an ID, unique email, password hash, password salt, and active flag.</p></div>
+  <div class="card teal"><h3>Work-order database</h3><p>The existing sqlite-net database remains separate from authentication. This limits schema coupling while the POC is being developed.</p></div>
+</div>
+<table><tr><th>Concern</th><th>Current POC treatment</th><th>Production evolution</th></tr>
+<tr><td>Credential seed</td><td><strong>auth-seed.json</strong> is packaged for initial local setup only.</td><td>Remove default credentials from the client and provision accounts through an identity service.</td></tr>
+<tr><td>Password storage</td><td>Only derived hash and salt are stored in EF.</td><td>Use a managed identity provider or a server-side password policy and audit trail.</td></tr>
+<tr><td>Session token</td><td>Only a local user ID is stored in SecureStorage.</td><td>Use short-lived access tokens and rotating refresh tokens from an API.</td></tr>
+<tr><td>Authorization</td><td>Active-user check only.</td><td>Add roles, permissions, tenant boundaries, and server-side authorization.</td></tr>
+<tr><td>Transport</td><td>No remote transport in this POC.</td><td>Use HTTPS, certificate validation, API request timeouts, and error handling.</td></tr>
+</table>
+<div class="note"><strong>Important:</strong> The credentials in <strong>auth-seed.json</strong> are development credentials. They must not be shipped unchanged in a production release.</div>
+<h2>6. POC Acceptance Criteria</h2>
+<ul><li>First launch creates the auth SQLite database and seeds a user from JSON when no users exist.</li><li>Valid credentials navigate to the dashboard.</li><li>Invalid credentials do not create a session and show an error.</li><li>Restarting the app preserves a valid local session token.</li><li>Logout removes the persisted session and returns to login.</li><li>Windows target builds successfully.</li></ul>
+</section>
+
+<section class="page-break">
+<h2>7. Recommended Next Steps</h2>
+<ol>
+<li><strong>Complete Phase 2 lifecycle handling:</strong> add centralized app lifecycle state restoration and resource cleanup for backgrounding and resume.</li>
+<li><strong>Complete Phase 3 permissions:</strong> request camera permission explicitly and handle denied, restricted, and permanently denied states.</li>
+<li><strong>Add responsive resources:</strong> use OnIdiom and OnPlatform styles for phone, tablet, desktop, Android, iOS, and Windows differences.</li>
+<li><strong>Add platform customization:</strong> introduce a small handler mapper example only where the native control behavior requires it.</li>
+<li><strong>Introduce an API boundary:</strong> move credential verification and user management to a backend service.</li>
+<li><strong>Replace the seed account:</strong> remove the packaged password and add controlled provisioning for development environments.</li>
+<li><strong>Unify persistence:</strong> migrate work orders from sqlite-net to EF Core migrations if a single relational model is preferred.</li>
+<li><strong>Add authorization:</strong> model technician, supervisor, and administrator permissions.</li>
+<li><strong>Add automated tests:</strong> cover hash verification, invalid credentials, logout, inactive users, and database initialization.</li>
+<li><strong>Add observability:</strong> structured authentication events without logging passwords or tokens.</li>
+<li><strong>Plan offline sync:</strong> define conflict handling, local queueing, and server reconciliation for field connectivity.</li>
+</ol>
+<h2>8. Implementation Reference</h2>
+<table><tr><th>Area</th><th>Primary files</th></tr>
+<tr><td>Authentication</td><td>FieldPro/Services/AuthService.cs<br>FieldPro/Services/IAuthService.cs</td></tr>
+<tr><td>EF Core model</td><td>FieldPro/Data/AuthDbContext.cs<br>FieldPro/Models/User.cs</td></tr>
+<tr><td>Seed configuration</td><td>FieldPro/Resources/Raw/auth-seed.json</td></tr>
+<tr><td>Startup and DI</td><td>FieldPro/MauiProgram.cs</td></tr>
+<tr><td>Navigation and logout</td><td>FieldPro/AppShell.xaml.cs</td></tr>
+</table>
+<div class="footer">FieldPro POC | Internal technical overview | Generated from the current repository implementation</div>
+</section>
+</body>
+</html>

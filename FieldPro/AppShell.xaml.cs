@@ -57,7 +57,12 @@ public partial class AppShell : Shell
             // Resolve services from the MAUI service provider
             var services = App.Current?.Handler?.MauiContext?.Services;
             var appSession = services?.GetService<FieldPro.Services.IAppSession>();
+            var authService = services?.GetService<FieldPro.Services.IAuthService>();
 
+            if (authService != null)
+            {
+                await authService.LogoutAsync();
+            }
             appSession?.Logout();
 
             // Navigate to the login page (clear stack)

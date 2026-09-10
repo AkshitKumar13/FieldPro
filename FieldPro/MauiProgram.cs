@@ -4,6 +4,7 @@ using FieldPro.Data;
 using FieldPro.ViewModels;
 using FieldPro.Views;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace FieldPro
 #endif
             //services
             builder.Services.AddSingleton<FieldProDatabase>();
+            builder.Services.AddPooledDbContextFactory<AuthDbContext>(options =>
+                options.UseSqlite($"Data Source={AuthDbContext.GetDatabasePath()}"));
             builder.Services.AddSingleton<IAppSession, AppSession>();
             builder.Services.AddSingleton<DatabaseSeeder>();
 
@@ -55,6 +58,9 @@ namespace FieldPro
                     if (database != null)
                     {
                         await database.InitializeAsync();
+
+                        var authService = mauiApp.Services.GetRequiredService<IAuthService>();
+                        await authService.InitializeAsync();
 
                         if (seeder != null)
                         {
