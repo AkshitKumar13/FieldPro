@@ -27,6 +27,7 @@
         <ShellContent Title="Notifications" Route="Notifications" ContentTemplate="{DataTemplate views:NotificationsPage}" />
         <ShellContent Title="Documents" Route="Documents" ContentTemplate="{DataTemplate views:DocumentsPage}" />
         <ShellContent Title="Profile" Route="Profile" ContentTemplate="{DataTemplate views:ProfilePage}" />
+        <ShellContent Title="Device Capabilities" Route="DeviceCapabilities" ContentTemplate="{DataTemplate views:DeviceCapabilitiesPage}" />
 
     </FlyoutItem>
 

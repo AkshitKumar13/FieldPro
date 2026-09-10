@@ -10,7 +10,7 @@
 					<Picker Title="Assignee" ItemsSource="{Binding Users}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedAssignee}" />
 					<Picker Grid.Column="1" Title="Project" ItemsSource="{Binding Projects}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedProject}" />
 				</Grid>
-				<Button Text="Add task" Clicked="OnAddTaskClicked" />
+				<Button Text="Add task" Command="{Binding AddTaskCommand}" />
 			</VerticalStackLayout>
 		</Border>
 		<CollectionView Grid.Row="1" ItemsSource="{Binding Items}">
@@ -18,10 +18,15 @@
 				<DataTemplate>
 					<Border Padding="14" Margin="0,0,0,10" Stroke="#D9E1E8">
 						<VerticalStackLayout Spacing="5">
-							<Label Text="{Binding Title}" FontSize="17" FontAttributes="Bold" />
+							<Grid ColumnDefinitions="*,Auto">
+								<Label Text="{Binding Title}" FontSize="17" FontAttributes="Bold" />
+								<Border Grid.Column="1" Padding="8,4" BackgroundColor="#EEF5F8" Stroke="#A9C5D0">
+									<Label Text="{Binding Status}" TextColor="#315C7D" FontAttributes="Bold" />
+								</Border>
+							</Grid>
 							<Label Text="{Binding Description}" />
+							<Label Text="{Binding AssignedUserName, StringFormat='Assigned to: {0}'}" TextColor="#315C7D" />
 							<Label Text="{Binding DueDate, StringFormat='Due {0:d}'}" TextColor="#5F6B7A" />
-							<Picker Title="Reassign task" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CanAssignTasks}" ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.Users}" ItemDisplayBinding="{Binding DisplayName}" SelectedIndexChanged="OnAssigneeChanged" />
 							<Picker Title="Update status" ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.Statuses}" SelectedItem="{Binding Status}" SelectedIndexChanged="OnStatusChanged" />
 						</VerticalStackLayout>
 					</Border>

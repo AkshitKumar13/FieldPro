@@ -24,7 +24,7 @@
                 FontSize="16"
                 HorizontalOptions="Center" />
 
-            <Picker Title="Choose a demo user" ItemsSource="{Binding Users}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedUser}" />
+            <Picker Title="Choose a demo user" ItemsSource="{Binding Users}" ItemDisplayBinding="{Binding DisplayLabel}" SelectedItem="{Binding SelectedUser}" />
 
             <Button
                 Text="Login"

@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TaskForge.Views.DashboardPage" Title="Dashboard">
     <ScrollView><VerticalStackLayout Padding="24" Spacing="18">
         <Label Text="TASKFORGE" FontSize="13" CharacterSpacing="2" TextColor="#5F6B7A" />
-        <Label Text="Welcome back" FontSize="30" FontAttributes="Bold" />
+        <Label Text="Welcome back" FontSize="{OnIdiom Phone=30, Tablet=34, Desktop=38}" FontAttributes="Bold" />
         <Label Text="{Binding UserName}" FontSize="18" TextColor="#315C7D" />
         <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
             <Border Grid.Column="0" Padding="16" Stroke="#D9E1E8"><VerticalStackLayout><Label Text="In progress"/><Label Text="{Binding OpenCount}" FontSize="30" FontAttributes="Bold"/></VerticalStackLayout></Border>
@@ -10,7 +10,11 @@
             <Border Grid.Row="1" Grid.Column="0" Padding="16" Stroke="#D9E1E8"><VerticalStackLayout><Label Text="Completed"/><Label Text="{Binding CompletedCount}" FontSize="30" FontAttributes="Bold"/></VerticalStackLayout></Border>
             <Border Grid.Row="1" Grid.Column="1" Padding="16" Stroke="#D9E1E8"><VerticalStackLayout><Label Text="Access level"/><Label Text="{Binding RoleName}" FontSize="16" FontAttributes="Bold"/></VerticalStackLayout></Border>
         </Grid>
-        <Button Text="Open tasks" Clicked="OnOpenTasksTapped" />
-        <Label Text="SQLite local development database is active." TextColor="#5F6B7A" />
+        <Button Text="Open tasks" Command="{Binding OpenTasksCommand}" />
+        <Button Text="Open documents" Command="{Binding OpenDocumentsCommand}" HorizontalOptions="Start" Padding="12,8" />
+        <VerticalStackLayout Spacing="8">
+            <Label Text="SQLite local development database is active." TextColor="#5F6B7A" />
+            <Button Text="System status" Command="{Binding OpenStatusCommand}" HorizontalOptions="Start" Padding="16,10" />
+        </VerticalStackLayout>
     </VerticalStackLayout></ScrollView>
 </ContentPage>

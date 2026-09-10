@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TaskForge POC and High-Level Architecture</title>
+<style>
+@page{size:A4;margin:15mm}body{font:10.5pt Arial,sans-serif;color:#17202a;line-height:1.45}h1,h2{color:#153b56}h1{font-size:29pt;line-height:1.08}h2{font-size:17pt;border-bottom:2px solid #1c78a8;padding-bottom:4px;margin-top:22px}h3{color:#153b56}.cover{min-height:245mm;display:flex;flex-direction:column;justify-content:center}.kicker{color:#087f8c;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase}.subtitle{font-size:15pt;color:#5d6b78}.meta{margin-top:35mm;border-top:1px solid #c9d6df;padding-top:12px;color:#5d6b78}.page{page-break-before:always}.arch{background:#f4f9fb;border:1px solid #c9d6df;padding:12px}.layer{display:flex;gap:8px;margin:8px 0}.label{width:30mm;background:#153b56;color:white;padding:9px;font-weight:bold}.nodes{display:flex;gap:8px;flex:1}.node{background:white;border:1px solid #9fb5c3;padding:8px;flex:1}.node b{color:#1c78a8;display:block}.arrow{text-align:center;color:#087f8c;font-size:16pt}table{border-collapse:collapse;width:100%;font-size:9.5pt}th{background:#153b56;color:white;text-align:left}th,td{border:1px solid #c9d6df;padding:7px;vertical-align:top}tr:nth-child(even)td{background:#f5f8fa}.note{background:#fff5dc;border:1px solid #e2c276;padding:10px}.footer{border-top:1px solid #c9d6df;color:#5d6b78;margin-top:18px;padding-top:5px;font-size:8.5pt}.flow{display:grid;grid-template-columns:1fr 20px 1fr 20px 1fr;gap:5px;align-items:center}.step{background:#eef5f8;border:1px solid #a9c5d0;padding:8px;text-align:center;min-height:56px;font-size:9pt}.step b{display:block;color:#153b56}.arr{text-align:center;color:#087f8c;font-size:15pt}
+</style>
+</head>
+<body>
+<section class="cover">
+<div class="kicker">TaskForge | Proof of Concept</div>
+<h1>Task Management Platform</h1>
+<p class="subtitle">POC detail and high-level architecture for the TaskForge application.</p>
+<p><b>Prepared:</b> 10 September 2026</p>
+<div class="meta"><p><b>Technology:</b> .NET MAUI, Shell, CommunityToolkit.Mvvm, dependency injection, and SQLite.</p><p><b>Scope:</b> users, tasks, projects, notifications, documents, dashboard, profile, and device capability demonstrations.</p></div>
+</section>
+
+<section class="page">
+<h2>1. POC Overview</h2>
+<p>TaskForge is a cross-platform task and project management application. The POC demonstrates local data storage, role-aware task views, MVVM screens, Shell navigation, and device capability access.</p>
+<table><tr><th>Area</th><th>Current implementation</th></tr>
+<tr><td>User access</td><td>Simple demo-user selection with in-memory session state and logout.</td></tr>
+<tr><td>Task management</td><td>Create, assign, view, filter, and update task status.</td></tr>
+<tr><td>Dashboard</td><td>Shows real task counts from SQLite. Managers and administrators see all tasks; employees see assigned tasks.</td></tr>
+<tr><td>Documents</td><td>Displays the bundled project brief and opens the PDF using the platform launcher.</td></tr>
+<tr><td>Device capabilities</td><td>UI for camera capture, GPS lookup, and accelerometer readings with permission feedback.</td></tr>
+<tr><td>Storage</td><td>Local SQLite database at <b>FileSystem.AppDataDirectory/taskforge.db3</b>.</td></tr>
+</table>
+<div class="note"><b>POC boundary:</b> TaskForge currently has no backend API, cloud synchronization, password authentication, or multi-device data sharing.</div>
+<h2>2. Main User Flow</h2>
+<div class="flow"><div class="step"><b>1. Select user</b>Choose a demo user.</div><div class="arr">&#8594;</div><div class="step"><b>2. Dashboard</b>View role-aware task counts.</div><div class="arr">&#8594;</div><div class="step"><b>3. Task board</b>View and update task statuses.</div></div>
+<div class="flow"><div class="step"><b>4. Documents</b>Open the project brief PDF.</div><div class="arr">&#8594;</div><div class="step"><b>5. Device page</b>Use camera, GPS, or sensors.</div><div class="arr">&#8594;</div><div class="step"><b>6. Logout</b>Clear the current session.</div></div>
+</section>
+
+<section class="page">
+<h2>3. High-Level Architecture</h2>
+<div class="arch">
+<div class="layer"><div class="label">XAML UI</div><div class="nodes"><div class="node"><b>LoginPage</b>Demo-user selection</div><div class="node"><b>DashboardPage</b>Counts and navigation</div><div class="node"><b>TasksPage</b>Status board</div><div class="node"><b>DocumentsPage</b>PDF opening</div><div class="node"><b>DeviceCapabilitiesPage</b>Hardware controls</div></div></div>
+<div class="arrow">&#8595;</div>
+<div class="layer"><div class="label">MVVM</div><div class="nodes"><div class="node"><b>LoginViewModel</b>Login command</div><div class="node"><b>DashboardViewModel</b>Role-aware counts</div><div class="node"><b>TasksViewModel</b>Task commands</div><div class="node"><b>DeviceCapabilitiesViewModel</b>Permission and result state</div></div></div>
+<div class="arrow">&#8595;</div>
+<div class="layer"><div class="label">Services</div><div class="nodes"><div class="node"><b>AuthService</b>User lookup</div><div class="node"><b>TaskForgeDatabase</b>SQLite data access</div><div class="node"><b>AppSession</b>Current user</div><div class="node"><b>DeviceCapabilitiesService</b>Camera, GPS, accelerometer</div></div></div>
+<div class="arrow">&#8595;</div>
+<div class="layer"><div class="label">Storage / OS</div><div class="nodes"><div class="node"><b>taskforge.db3</b>Local SQLite data</div><div class="node"><b>AppDataDirectory</b>PDF and captured files</div><div class="node"><b>Platform APIs</b>Permissions and device services</div></div></div>
+</div>
+<p><b>Dependency injection:</b> MauiProgram registers services, ViewModels, and pages. <b>Navigation:</b> AppShell defines Login, Dashboard, Tasks, Projects, Team, Notifications, Documents, Profile, and Device Capabilities routes.</p>
+<h3>Data flow</h3>
+<div class="flow"><div class="step"><b>SQLite</b>Load users and tasks.</div><div class="arr">&#8594;</div><div class="step"><b>Services</b>Apply session and role rules.</div><div class="arr">&#8594;</div><div class="step"><b>ViewModels</b>Expose observable state and commands.</div></div>
+</section>
+
+<section class="page">
+<h2>4. Task and Document Design</h2>
+<table><tr><th>Feature</th><th>Behavior</th></tr>
+<tr><td>Task counts</td><td>Administrators, project managers, and team leads use all task rows. Employees use rows assigned to their user ID.</td></tr>
+<tr><td>Task board</td><td>Shows title, description, due date, visible status, and status picker.</td></tr>
+<tr><td>Task creation</td><td>Authorized users create tasks through AddTaskCommand, which inserts into SQLite and creates a notification.</td></tr>
+<tr><td>Status updates</td><td>Picker changes update the TaskItem status in SQLite.</td></tr>
+<tr><td>PDF document</td><td>The bundled project-brief.pdf is copied to app storage and opened with Launcher.OpenAsync.</td></tr>
+<tr><td>Notifications</td><td>Assignment notifications are stored and can be marked read.</td></tr>
+</table>
+<h2>5. Device Capability UI</h2>
+<table><tr><th>Capability</th><th>Screen behavior</th></tr>
+<tr><td>Camera</td><td>Requests camera permission, captures a photo, saves it in app storage, and displays the result.</td></tr>
+<tr><td>GPS</td><td>Requests location permission and displays latitude and longitude.</td></tr>
+<tr><td>Accelerometer</td><td>Starts and stops monitoring and displays live X, Y, and Z values.</td></tr>
+<tr><td>Platform styling</td><td>Android and iOS Entry handler mapper examples are registered in MauiProgram.</td></tr>
+</table>
+</section>
+
+<section class="page">
+<h2>6. Acceptance Criteria</h2>
+<ul><li>Every demo user receives the correct role-aware task counts.</li><li>Open tasks displays the complete permitted task list.</li><li>Each task row shows its current status.</li><li>The project brief PDF opens from the Documents page.</li><li>Camera, GPS, and accelerometer controls show permission and result states.</li><li>Logout clears the in-memory session.</li><li>The Windows target builds successfully.</li></ul>
+<h2>7. Production Next Steps</h2>
+<ol><li>Replace demo-user selection with a backend identity service.</li><li>Move tasks and documents to an API-backed database.</li><li>Add token authentication, server-side authorization, and audit logging.</li><li>Persist captured photos and locations against task records.</li><li>Add offline synchronization and conflict resolution.</li><li>Add automated tests for task counts, task status updates, PDF opening, and device permissions.</li></ol>
+<h2>8. Implementation Reference</h2>
+<table><tr><th>Area</th><th>Files</th></tr><tr><td>Database</td><td>FieldPro/Data/TaskForgeDatabase.cs<br>FieldPro/Services/ITaskForgeDataService.cs</td></tr><tr><td>Task board</td><td>FieldPro/ViewModels/TasksViewModel.cs<br>FieldPro/Views/TasksPage.xaml</td></tr><tr><td>Dashboard</td><td>FieldPro/ViewModels/DashboardViewModel.cs<br>FieldPro/Views/DashboardPage.xaml</td></tr><tr><td>Documents</td><td>FieldPro/Views/DocumentsPage.xaml.cs<br>FieldPro/Resources/Raw/project-brief.pdf</td></tr><tr><td>Device UI</td><td>FieldPro/ViewModels/DeviceCapabilitiesViewModel.cs<br>FieldPro/Views/DeviceCapabilitiesPage.xaml</td></tr><tr><td>Startup</td><td>FieldPro/MauiProgram.cs<br>FieldPro/AppShell.xaml</td></tr></table>
+<div class="footer">TaskForge POC | Fresh current architecture document | Internal technical overview</div>
+</section>
+</body></html>

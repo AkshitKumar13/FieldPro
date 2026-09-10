@@ -15,6 +15,7 @@ public class User
     public string DisplayName { get; set; } = string.Empty;
     public string Department { get; set; } = string.Empty;
     public string JobTitle { get; set; } = string.Empty;
+    [Ignore] public string DisplayLabel => $"{DisplayName} - {JobTitle}";
     public UserRole Role { get; set; }
     public AvailabilityStatus AvailabilityStatus { get; set; } = AvailabilityStatus.Available;
     public bool InAppNotificationsEnabled { get; set; } = true;
@@ -30,6 +31,7 @@ public class TaskItem
     public DateTime? DueDate { get; set; }
     public int AssignedUserId { get; set; }
     public int ProjectId { get; set; }
+    [Ignore] public string AssignedUserName { get; set; } = string.Empty;
 }
 
 public class Project
@@ -74,6 +76,7 @@ public class TaskForgeDocument
     public string Category { get; set; } = string.Empty;
     public string OriginalFileName { get; set; } = string.Empty;
     public string ContentType { get; set; } = string.Empty;
+    public string FilePath { get; set; } = string.Empty;
     public long FileSize { get; set; }
     public int UploadedByUserId { get; set; }
     public int? ProjectId { get; set; }

@@ -28,5 +28,9 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+	<key>NSCameraUsageDescription</key>
+	<string>TaskForge uses the camera to attach evidence to tasks.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>TaskForge uses location to support field-work context.</string>
 </dict>
 </plist>

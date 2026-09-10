@@ -47,7 +47,6 @@ public partial class AppShell : Shell
             // Resolve services from the MAUI service provider
             var services = App.Current?.Handler?.MauiContext?.Services;
             var appSession = services?.GetService<Services.IAppSession>();
-
             appSession?.Logout();
 
             // Navigate to the login page (clear stack)

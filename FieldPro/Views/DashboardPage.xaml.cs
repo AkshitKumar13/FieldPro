@@ -19,26 +19,6 @@ public partial class DashboardPage : ContentPage
             BindingContext = vm;
     }
 
-    private async void OnOpenTasksTapped(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("//Tasks");
-    }
-
-    private async void OnPendingTapped(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("Tasks");
-    }
-
-    private async void OnCompletedTapped(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("Tasks");
-    }
-
-    private async void OnSystemStatusTapped(object sender, EventArgs e)
-    {
-        await DisplayAlertAsync("System Status", "The system is online.", "OK");
-    }
-
     protected override async void OnAppearing()
     {
         base.OnAppearing();

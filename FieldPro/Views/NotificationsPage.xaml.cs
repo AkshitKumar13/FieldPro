@@ -1,19 +1,15 @@
-using TaskForge.Models;
-using TaskForge.Services;
-using System.Collections.ObjectModel;
+using TaskForge.ViewModels;
 namespace TaskForge.Views;
 public partial class NotificationsPage : ContentPage
 {
-    private readonly ITaskForgeDataService _data; private readonly IAppSession _session; public ObservableCollection<Notification> Items { get; } = new();
-    public NotificationsPage(ITaskForgeDataService data, IAppSession session) { InitializeComponent(); _data = data; _session = session; BindingContext = this; }
-    protected override async void OnAppearing() { base.OnAppearing(); Items.Clear(); foreach (var item in await _data.GetNotificationsAsync(_session.CurrentUser?.UserId ?? 0)) Items.Add(item); }
-    private async void OnNotificationTapped(object sender, EventArgs e)
+    private readonly NotificationsViewModel _viewModel;
+    public NotificationsPage(NotificationsViewModel viewModel) { InitializeComponent(); _viewModel = viewModel; BindingContext = viewModel; }
+    protected override async void OnAppearing() { base.OnAppearing(); await _viewModel.LoadAsync(); }
+    private void OnNotificationTapped(object? sender, EventArgs e)
     {
-        if (sender is TapGestureRecognizer { BindingContext: Notification notification } && !notification.IsRead)
+        if (sender is TapGestureRecognizer { BindingContext: Models.Notification notification })
         {
-            await _data.MarkNotificationReadAsync(notification.NotificationId);
-            notification.IsRead = true;
-            OnPropertyChanged(nameof(Items));
+            _viewModel.MarkReadCommand.Execute(notification);
         }
     }
 }

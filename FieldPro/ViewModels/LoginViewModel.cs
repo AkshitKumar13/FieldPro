@@ -57,7 +57,7 @@ public partial class LoginViewModel : ObservableObject
 
             if (SelectedUser is null)
             {
-                ErrorMessage = "Please enter email and password.";
+                ErrorMessage = "Please choose a user.";
                 return;
             }
 

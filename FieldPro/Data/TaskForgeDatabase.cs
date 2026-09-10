@@ -25,7 +25,17 @@ public sealed class TaskForgeDatabase : TaskForge.Services.ITaskForgeDataService
         await _database.CreateTableAsync<Announcement>();
         await _database.CreateTableAsync<Notification>();
         await _database.CreateTableAsync<TaskForgeDocument>();
+        try
+        {
+            await _database.ExecuteAsync("ALTER TABLE TaskForgeDocument ADD COLUMN FilePath TEXT");
+        }
+        catch (SQLiteException)
+        {
+            // The column already exists on new databases or after the first migration.
+        }
+        await _database.ExecuteAsync("UPDATE TaskForgeDocument SET FilePath = ? WHERE OriginalFileName = ? AND (FilePath IS NULL OR FilePath = '')", "project-brief.pdf", "project-brief.pdf");
         if (await _database.Table<User>().CountAsync() == 0) await SeedAsync();
+        await _database.ExecuteAsync("UPDATE User SET DisplayName = ? WHERE UserId = ?", "Ali Patel", 2);
         _initialized = true;
     }
 
@@ -81,7 +91,7 @@ public sealed class TaskForgeDatabase : TaskForge.Services.ITaskForgeDataService
     public Task<List<ProjectMember>> GetProjectMembersAsync(int projectId) => _database.Table<ProjectMember>().Where(x => x.ProjectId == projectId).ToListAsync();
     public Task<List<Announcement>> GetAnnouncementsAsync() => _database.Table<Announcement>().OrderByDescending(x => x.PublishDate).ToListAsync();
     public Task<List<Notification>> GetNotificationsAsync(int userId) => _database.Table<Notification>().Where(x => x.UserId == userId).OrderByDescending(x => x.NotificationId).ToListAsync();
-    public Task<List<TaskForgeDocument>> GetDocumentsAsync(int userId) => _database.Table<TaskForgeDocument>().Where(x => x.UploadedByUserId == userId).OrderByDescending(x => x.UploadedDate).ToListAsync();
+    public Task<List<TaskForgeDocument>> GetDocumentsAsync(int userId) => _database.Table<TaskForgeDocument>().OrderByDescending(x => x.UploadedDate).ToListAsync();
     public Task UpdateTaskStatusAsync(int taskId, TaskItemStatus status) => _database.ExecuteAsync("UPDATE TaskItem SET Status = ? WHERE TaskId = ?", (int)status, taskId);
     public Task MarkNotificationReadAsync(int notificationId) => _database.ExecuteAsync("UPDATE Notification SET IsRead = 1 WHERE NotificationId = ?", notificationId);
     public Task UpdateUserAsync(User user) => _database.UpdateAsync(user);
@@ -91,9 +101,9 @@ public sealed class TaskForgeDatabase : TaskForge.Services.ITaskForgeDataService
         await _database.InsertAllAsync(new[]
         {
             new User { UserId = 1, Email = "admin@taskforge.app", DisplayName = "System Administrator", Department = "IT", JobTitle = "Administrator", Role = UserRole.Administrator },
-            new User { UserId = 2, Email = "camille.nicole@taskforge.app", DisplayName = "Camille Nicole", Department = "Engineering", JobTitle = "Project Manager", Role = UserRole.ProjectManager },
-            new User { UserId = 3, Email = "floris.kregel@taskforge.app", DisplayName = "Floris Kregel", Department = "Engineering", JobTitle = "Team Lead", Role = UserRole.TeamLead },
-            new User { UserId = 4, Email = "ni.kang@taskforge.app", DisplayName = "Ni Kang", Department = "Engineering", JobTitle = "Software Engineer", Role = UserRole.Employee }
+            new User { UserId = 2, Email = "ali@taskforge.app", DisplayName = "Ali Patel", Department = "Engineering", JobTitle = "Project Manager", Role = UserRole.ProjectManager },
+            new User { UserId = 3, Email = "mayank@taskforge.app", DisplayName = "Mayank Sharma", Department = "Engineering", JobTitle = "Team Lead", Role = UserRole.TeamLead },
+            new User { UserId = 4, Email = "akshit@taskforge.app", DisplayName = "Akshit Kumar", Department = "Engineering", JobTitle = "Software Engineer", Role = UserRole.Employee }
         });
         await _database.InsertAsync(new Project { ProjectId = 1, Name = "TaskForge Development", Description = "Internal employee productivity dashboard", ProjectManagerId = 2, Status = ProjectStatus.Active, TargetCompletionDate = DateTime.UtcNow.AddDays(60) });
         await _database.InsertAllAsync(new[]
@@ -109,6 +119,6 @@ public sealed class TaskForgeDatabase : TaskForge.Services.ITaskForgeDataService
         });
         await _database.InsertAsync(new Announcement { Title = "Welcome to TaskForge", Content = "Manage tasks, projects, documents, and team coordination in one place." });
         await _database.InsertAsync(new Notification { UserId = 4, Title = "New task assigned", Message = "Implement authentication was assigned to you." });
-        await _database.InsertAsync(new TaskForgeDocument { Title = "Project brief", Category = "Planning", OriginalFileName = "project-brief.pdf", ContentType = "application/pdf", FileSize = 128000, UploadedByUserId = 4, ProjectId = 1 });
+        await _database.InsertAsync(new TaskForgeDocument { Title = "Project brief", Category = "Planning", OriginalFileName = "project-brief.pdf", ContentType = "application/pdf", FilePath = "project-brief.pdf", FileSize = 128000, UploadedByUserId = 4, ProjectId = 1 });
     }
 }

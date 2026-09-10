@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="TaskForge.Views.DeviceCapabilitiesPage"
+    Title="Device Capabilities">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="18">
+            <Label Text="Device capabilities" FontSize="28" FontAttributes="Bold" />
+            <Label Text="These controls request permission only when the capability is used." TextColor="#5F6B7A" />
+
+            <Border Padding="16" Stroke="#D9E1E8">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Camera" FontSize="19" FontAttributes="Bold" />
+                    <Label Text="Capture a photo and save it in app storage." TextColor="#5F6B7A" />
+                    <Button Text="Capture photo" Command="{Binding CapturePhotoCommand}" HorizontalOptions="Start" />
+                    <Label Text="{Binding CameraStatus}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16" Stroke="#D9E1E8">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Location" FontSize="19" FontAttributes="Bold" />
+                    <Label Text="Request location access and read the current coordinates." TextColor="#5F6B7A" />
+                    <Button Text="Get current location" Command="{Binding GetLocationCommand}" HorizontalOptions="Start" />
+                    <Label Text="{Binding LocationStatus}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16" Stroke="#D9E1E8">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Accelerometer" FontSize="19" FontAttributes="Bold" />
+                    <Label Text="Read live X, Y, and Z acceleration values." TextColor="#5F6B7A" />
+                    <HorizontalStackLayout Spacing="10">
+                        <Button Text="Start" Command="{Binding StartAccelerometerCommand}" IsEnabled="{Binding IsAccelerometerSupported}" />
+                        <Button Text="Stop" Command="{Binding StopAccelerometerCommand}" IsEnabled="{Binding IsAccelerometerRunning}" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding AccelerometerStatus}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Padding="16" Stroke="#D9E1E8">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Platform customization" FontSize="19" FontAttributes="Bold" />
+                    <Label Text="Android and iOS Entry handler mappings are registered in MauiProgram." TextColor="#5F6B7A" />
+                    <Label Text="The same shared UI uses platform permission APIs through DeviceCapabilitiesService." />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

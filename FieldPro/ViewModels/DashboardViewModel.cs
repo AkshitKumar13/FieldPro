@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TaskForge.Services;
 using System.Threading.Tasks;
+using TaskForge.Models;
 
 namespace TaskForge.ViewModels;
 
@@ -30,17 +32,22 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private string systemStatus = "Online";
 
+    [RelayCommand]
+    private Task OpenTasksAsync() => Shell.Current.GoToAsync("//Tasks");
+
+    [RelayCommand]
+    private Task OpenStatusAsync() => Shell.Current.DisplayAlertAsync("System Status", "The system is online.", "OK");
+
+    [RelayCommand]
+    private Task OpenDocumentsAsync() => Shell.Current.GoToAsync("//Documents");
+
     public async Task LoadCountsAsync()
     {
-        var all = await _data.GetTasksAsync(_session.CurrentUser?.UserId ?? 0);
-
-        if (all == null)
-        {
-            OpenCount = 0;
-            PendingCount = 0;
-            CompletedCount = 0;
-            return;
-        }
+        var user = _session.CurrentUser;
+        var all = user is { Role: UserRole.Administrator or UserRole.ProjectManager or UserRole.TeamLead }
+            ? await _data.GetAllTasksAsync()
+            : await _data.GetTasksAsync(user?.UserId ?? 0);
+        all ??= new List<TaskItem>();
 
         CompletedCount = all.Count(w => w.Status == Models.TaskStatus.Completed);
         PendingCount = all.Count(w => w.Status == Models.TaskStatus.NotStarted);
