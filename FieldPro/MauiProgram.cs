@@ -4,6 +4,7 @@ using TaskForge.Data;
 using TaskForge.ViewModels;
 using TaskForge.Views;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -33,6 +34,8 @@ namespace TaskForge
             builder.Logging.AddDebug();
 #endif
             //services
+            builder.Services.AddPooledDbContextFactory<TaskForgeDbContext>(options =>
+                options.UseSqlite($"Data Source={TaskForgeDbContext.GetDatabasePath()}"));
             builder.Services.AddSingleton<TaskForgeDatabase>();
             builder.Services.AddSingleton<ITaskForgeDataService>(sp => sp.GetRequiredService<TaskForgeDatabase>());
             builder.Services.AddSingleton<IAppSession, AppSession>();
